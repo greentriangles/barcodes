@@ -1,8 +1,8 @@
-# Ingress Barcode Mapper
+# Ingress Barcode Mapper API
 
 This gadget maps Ingress 'barcode' agent names into human-memorable ones.
 
-## Demo
+## Calling the API
 
 ```
 $ curl https://us-central1-ingress-barcodes.cloudfunctions.net/barcode?agent=@iiililililil
@@ -11,6 +11,14 @@ $ curl https://us-central1-ingress-barcodes.cloudfunctions.net/barcode?agent=@ii
 $ curl -X POST -H "Content-Type:application/json" -d '{"agent":"iiillllllillill"}' https://us-central1-ingress-barcodes.cloudfunctions.net/barcode
 {"barcode_name":"iiillllllillill","given_name":"PricklyScorpion","integer_value":36825}
 ```
+
+The '@' symbol is optional in both GET and JSON POST forms.
+
+## Reliability
+
+It's an unpaid project hosted in Google's cloud.  It'll be pretty relible
+until Google loses interest, and then it'll probably break.  If that's a
+concern, take a copy of the code and host it yourself.
 
 ## How it Works
 
