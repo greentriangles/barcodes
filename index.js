@@ -31,6 +31,10 @@
  * that this is almost certainly not it.
  */
 
+exports.help = (req, res) => {
+	res.status(200).send('https://github.com/greentriangles/barcodes');
+};
+
 let agentNameRE = /^@?([il]{1,15})$/i;
 
 extractAgentName = (inp) => {
