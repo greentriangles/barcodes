@@ -1,0 +1,9 @@
+#!/bin/bash
+
+set -e
+
+R=https://source.developers.google.com/projects/ingress-barcodes/repos/barcodes/moveable-aliases/master/paths/
+
+gcloud --project=ingress-barcodes beta functions deploy barcode \
+	--source "$R" \
+	--trigger-http
