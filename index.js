@@ -127,7 +127,7 @@ exports.barcode = (req, res) => {
 	res.status(400).send('Unsupported method');
 };
 
-exports.multibatcode = (req, res) => {
+exports.multibarcode = (req, res) => {
 	switch (req.method) {
 		case 'GET': return bcgetmulti(req, res);
 		case 'POST': return bcpostmulti(req, res);
