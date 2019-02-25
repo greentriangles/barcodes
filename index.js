@@ -93,10 +93,44 @@ bcpost = (req, res) => {
 	return barcodeToName(req, res, req.body.agent);
 };
 
+multiBarcodeToName = (req, res, agents) => {
+	var response = {};
+	agents.forEach(function (agent) {
+		let a = extractAgentName(agent);
+		if (!a) {
+			return res.status(400).send('Invalid agent name');
+		}
+		let intv = barcodeToInt(a);
+		let name = intToName(intv);
+		response[agent] = {
+			'barcode_name': agent,
+			'given_name': name,
+			'integer_value': intv,
+		};
+	});
+	return res.status(200).send(response);
+};
+
+bcgetmulti = (req, res) => {
+	return multiBarcodeToName(req, res, req.query.agents);
+};
+
+bcpostmulti = (req, res) => {
+	return multiBarcodeToName(req, res, req.body.agents);
+};
+
 exports.barcode = (req, res) => {
 	switch (req.method) {
 		case 'GET': return bcget(req, res);
 		case 'POST': return bcpost(req, res);
+	}
+	res.status(400).send('Unsupported method');
+};
+
+exports.multibatcode = (req, res) => {
+	switch (req.method) {
+		case 'GET': return bcgetmulti(req, res);
+		case 'POST': return bcpostmulti(req, res);
 	}
 	res.status(400).send('Unsupported method');
 };
