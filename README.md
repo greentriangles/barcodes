@@ -4,6 +4,10 @@ This gadget maps Ingress 'barcode' agent names into human-memorable ones.
 
 ## Calling the API
 
+The '@' symbol is optional in all cases.
+
+### Single-agent (/barcode)
+
 ```
 $ curl https://us-central1-ingress-barcodes.cloudfunctions.net/barcode?agent=@iiililililil
 {"barcode_name":"@iiililililil","given_name":"BoilingDonkey","integer_value":4435}
@@ -12,7 +16,15 @@ $ curl -X POST -H "Content-Type:application/json" -d '{"agent":"iiillllllillill"
 {"barcode_name":"iiillllllillill","given_name":"PricklyScorpion","integer_value":36825}
 ```
 
-The '@' symbol is optional in both GET and JSON POST forms.
+### Multi-agent (/barcodemulti)
+
+```
+$ curl https://us-central1-ingress-barcodes.cloudfunctions.net/barcodemulti?agents=iillllllillil,iillllllilli
+{"iillllllillil":{"barcode_name":"iillllllillil","given_name":"CluelessToffee","integer_value":10219},"iillllllilli":{"barcode_name":"iillllllilli","given_name":"BraveUvula","integer_value":5108}}
+
+$ curl -X POST -H "Content-Type:application/json" -d '{"agents":["IIIllllllIllIll","ILIllllllILlIlI"]}' https://us-central1-ingress-barcodes.cloudfunctions.net/barcodemulti
+{"IIIllllllIllIll":{"barcode_name":"iiillllllillill","given_name":"PricklyScorpion","integer_value":36825},"ILIllllllILlIlI":{"barcode_name":"ilillllllillili","given_name":"SilkyScarf","integer_value":45016}}
+```
 
 ## Reliability
 
