@@ -35,6 +35,14 @@ exports.help = (req, res) => {
 	res.status(200).send('https://github.com/greentriangles/barcodes');
 };
 
+class InvalidArgumentError extends Error {
+	constructor(message) {
+		super(message);
+		this.name = this.constructor.name;
+		Error.captureStackTrace(this, this.constructor);
+	}
+}
+
 let agentNameRE = /^@?([il]{1,15})$/i;
 
 extractAgentName = (inp) => {
@@ -71,18 +79,32 @@ intToName = (v) => {
 	return titleCase(firstWords[h]) + titleCase(secondWords[l]);
 };
 
-barcodeToName = (req, res, agent) => {
+convertBarcode = (agent) => {
 	let a = extractAgentName(agent);
 	if (!a) {
-		return res.status(400).send('Invalid agent name');
+		console.log('invalid agent name');
+		throw new InvalidArgumentError('Invalid/non-barcode agent name: ' + (agent || '(empty)'));
 	}
 	let intv = barcodeToInt(a);
 	let name = intToName(intv);
-	return res.status(200).send({
-		'barcode_name': agent,
+	return {
+		'barcode_name': a.toLowerCase(),
 		'given_name': name,
 		'integer_value': intv,
-	});
+	};
+};
+
+barcodeToName = (req, res, agent) => {
+	try {
+		let r = convertBarcode(agent);
+		return res.status(200).send(r);
+	} catch (e) {
+	 	if (e instanceof InvalidArgumentError) {
+			return res.status(400).send({error: e.message});
+		}
+		console.log(e);
+		return res.status(503).send({error: 'internal error'});
+	}
 };
 
 bcget = (req, res) => {
@@ -95,24 +117,22 @@ bcpost = (req, res) => {
 
 multiBarcodeToName = (req, res, agents) => {
 	var response = {};
-	agents.forEach(function (agent) {
-		let a = extractAgentName(agent);
-		if (!a) {
-			return res.status(400).send('Invalid agent name');
+	try {
+		agents.forEach(function (agent) {
+			let r = convertBarcode(agent);
+			response[agent] = r;
+		});
+	} catch (e) {
+		if (e instanceof InvalidArgumentError) {
+			return res.status(400).send({error: e.message});
 		}
-		let intv = barcodeToInt(a);
-		let name = intToName(intv);
-		response[agent] = {
-			'barcode_name': agent,
-			'given_name': name,
-			'integer_value': intv,
-		};
-	});
+		return res.status(503).send({error: 'internal error'});
+	}
 	return res.status(200).send(response);
 };
 
 bcgetmulti = (req, res) => {
-	return multiBarcodeToName(req, res, req.query.agents);
+	return multiBarcodeToName(req, res, req.query.agents.split(','));
 };
 
 bcpostmulti = (req, res) => {
@@ -120,6 +140,7 @@ bcpostmulti = (req, res) => {
 };
 
 exports.barcode = (req, res) => {
+	res.set('Access-Control-Allow-Origin', '*');
 	switch (req.method) {
 		case 'GET': return bcget(req, res);
 		case 'POST': return bcpost(req, res);
@@ -127,7 +148,8 @@ exports.barcode = (req, res) => {
 	res.status(400).send('Unsupported method');
 };
 
-exports.multibarcode = (req, res) => {
+exports.barcodemulti = (req, res) => {
+	res.set('Access-Control-Allow-Origin', '*');
 	switch (req.method) {
 		case 'GET': return bcgetmulti(req, res);
 		case 'POST': return bcpostmulti(req, res);
