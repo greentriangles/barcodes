@@ -24,6 +24,14 @@
  * range, in total covering 2^16-2 unique values.  Having done so, the result
  * is split into two 8-bit offsets into 256-word dictionaries.
  *
+ * For the minor sub-genre of barcode names with 1s inserted, which are not
+ * quite homoglyphic but hard to distinguish in Redacted game clients, the 1s
+ * are treated identically to Is.  Conversion of these names is not assured to
+ * remain stable over time.
+ *
+ * A few special barcode individuals have hardcoded names assigned from before
+ * this code was written.  Send pull requests if you wish to suggest your own.
+ *
  * To make the generated names memorable and sometimes amusing, the first
  * dictionary consists of english adjectives, the second of english nouns.
  *
@@ -43,7 +51,7 @@ class InvalidArgumentError extends Error {
 	}
 }
 
-let agentNameRE = /^@?([il]{1,15})$/i;
+let agentNameRE = /^@?([il1]{1,15})$/i;
 
 extractAgentName = (inp) => {
 	if (!inp) return null;
@@ -79,6 +87,10 @@ intToName = (v) => {
 	return titleCase(firstWords[h]) + titleCase(secondWords[l]);
 };
 
+let specialIndividuals = {
+	'iiii1iiii1iiiii': 'SaintPoop',
+};
+
 convertBarcode = (agent) => {
 	let a = extractAgentName(agent);
 	if (!a) {
@@ -87,6 +99,9 @@ convertBarcode = (agent) => {
 	}
 	let intv = barcodeToInt(a);
 	let name = intToName(intv);
+	if (specialIndividuals[a]) {
+		name = specialIndividuals[a];
+	}
 	return {
 		'barcode_name': a.toLowerCase(),
 		'given_name': name,
