@@ -6,12 +6,12 @@ R=https://source.developers.google.com/projects/ingress-barcodes/repos/barcodes/
 
 gcloud --project=ingress-barcodes functions deploy barcode \
 	--source "$R" \
-	--trigger-http --runtime=nodejs8
+	--trigger-http --runtime=nodejs10
 
 gcloud --project=ingress-barcodes functions deploy barcodemulti \
 	--source "$R" \
-	--trigger-http --runtime=nodejs8
+	--trigger-http --runtime=nodejs10
 
 gcloud --project=ingress-barcodes functions deploy help \
 	--source "$R" \
-	--trigger-http --runtime=nodejs8
+	--trigger-http --runtime=nodejs10
