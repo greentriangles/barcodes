@@ -89,6 +89,7 @@ intToName = (v) => {
 
 let specialIndividuals = {
 	'iiii1iiii1iiiii': 'SaintPoop',
+	'iiiiiiiiilll': 'sirBlinky',
 };
 
 convertBarcode = (agent) => {
